@@ -9,6 +9,8 @@ const InputWithIcon = ({
   iconOnRight = false,
   onRightIconClick,
   rightIconLabel,
+  onChange,
+  value,
 }: {
   id: string;
   icon: React.ReactNode;
@@ -17,6 +19,9 @@ const InputWithIcon = ({
   iconOnRight?: boolean;
   onRightIconClick?: () => void;
   rightIconLabel?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  className?: string;
 }) => {
   return (
     <div className="relative">
@@ -29,11 +34,13 @@ const InputWithIcon = ({
         id={id}
         type={type}
         placeholder={placeholder}
+        value={value}
         required
         className={cn(
           "h-12 border-border bg-background text-base",
           iconOnRight ? "pr-11" : "pl-10",
         )}
+        onChange={(e) => onChange && onChange(e)}
       />
       {iconOnRight &&
         (onRightIconClick ? (

@@ -10,9 +10,17 @@ interface PasswordInputProps {
   id: string;
   placeholder: string;
   className?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const PasswordInput = ({ id, placeholder, className }: PasswordInputProps) => {
+const PasswordInput = ({
+  id,
+  placeholder,
+  className,
+  value,
+  onChange,
+}: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -21,11 +29,13 @@ const PasswordInput = ({ id, placeholder, className }: PasswordInputProps) => {
         id={id}
         type={showPassword ? "text" : "password"}
         placeholder={placeholder}
+        value={value}
         required
         className={cn(
           "h-12 border-border bg-background pr-11 text-base",
           className,
         )}
+        onChange={(e) => onChange && onChange(e)}
       />
       <button
         type="button"

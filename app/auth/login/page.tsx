@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import AuthFeaturePanel from "@/components/auth/AuthFeaturePanel";
@@ -24,6 +27,17 @@ const LoginPage = ({
   signupUrl = "/auth/signin",
   className,
 }: LoginProps) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
   return (
     <section className={cn("min-h-screen bg-background", className)}>
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:py-14">
@@ -47,10 +61,17 @@ const LoginPage = ({
                 icon={<Mail className="size-4" />}
                 placeholder="name@company.com"
                 type="email"
+                value={email}
+                onChange={handleEmailChange}
               />
 
               <FieldLabel htmlFor="password" label="Password" />
-              <PasswordInput id="password" placeholder="Enter your password" />
+              <PasswordInput
+                id="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={handlePasswordChange}
+              />
 
               <Button
                 type="submit"
