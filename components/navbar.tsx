@@ -148,7 +148,7 @@ const Navbar = ({
     <section className={cn("py-2", className)}>
       <div className=" h-16 flex justify-center items-center">
         {/* Desktop Menu */}
-        <nav className="hidden items-center justify-between lg:flex w-3/4">
+        <nav className="flex items-center justify-between w-full px-4">
           <div className="flex items-center gap-6">
             {/* Logo */}
             <Link href={logo.url} className="flex items-center gap-2">
@@ -180,62 +180,6 @@ const Navbar = ({
             </Button>
           </div>
         </nav>
-
-        {/* Mobile Menu */}
-        <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link href={logo.url} className="flex items-center gap-2">
-              <Image
-                src={logo.src}
-                className="max-h-8 w-auto dark:invert"
-                alt={logo.alt}
-                width={32}
-                height={32}
-              />
-            </Link>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <Link href={logo.url} className="flex items-center gap-2">
-                      <Image
-                        src={logo.src}
-                        className="max-h-8 w-auto dark:invert"
-                        alt={logo.alt}
-                        width={32}
-                        height={32}
-                      />
-                    </Link>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 p-4">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
-
-                  <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <Link href={auth.login.url}>{auth.login.title}</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
       </div>
     </section>
   );
