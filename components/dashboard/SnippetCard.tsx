@@ -58,25 +58,6 @@ const SnippetCard = async ({ snippet }: SnippetCardProps) => {
           <p className="text-sm text-muted-foreground">
             Updated {snippet.updatedAt}
           </p>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon-sm" aria-label="Copy snippet">
-              <Copy className="size-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Favorite snippet"
-            >
-              <Star
-                className={
-                  snippet.starred
-                    ? "size-4 fill-primary text-primary"
-                    : "size-4 text-muted-foreground"
-                }
-              />
-            </Button>
-          </div>
         </div>
       </div>
     </article>

@@ -4,8 +4,10 @@ import { codeToHtml } from "shiki";
 const fallbackLanguage = "text";
 const theme = "github-dark-default";
 
-const removePreBackground = (html: string) => {
-  return html.replace(/background-color:[^;"]+;?/g, "");
+const normalizeShikiHtml = (html: string) => {
+  return html
+    .replace(/background-color:[^;"]+;?/g, "")
+    .replace(/<pre class="shiki/g, '<pre class="shiki dashboard-code-block');
 };
 
 export const highlightCode = cache(async (code: string, language: string) => {
@@ -15,13 +17,13 @@ export const highlightCode = cache(async (code: string, language: string) => {
       theme,
     });
 
-    return removePreBackground(html);
+    return normalizeShikiHtml(html);
   } catch {
     const html = await codeToHtml(code, {
       lang: fallbackLanguage,
       theme,
     });
 
-    return removePreBackground(html);
+    return normalizeShikiHtml(html);
   }
 });

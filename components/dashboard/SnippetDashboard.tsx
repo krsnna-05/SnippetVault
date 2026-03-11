@@ -7,6 +7,8 @@ import AddSnippetCard from "@/components/dashboard/AddSnippetCard";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import SnippetCard from "@/components/dashboard/SnippetCard";
+import { Button } from "../ui/button";
+import { Plus } from "lucide-react";
 
 interface SnippetDashboardProps {
   heading: string;
@@ -15,8 +17,6 @@ interface SnippetDashboardProps {
   collections: DashboardCollection[];
   snippets: DashboardSnippet[];
 }
-
-const tabs = ["All Snippets", "Recent", "Favorites"];
 
 const SnippetDashboard = ({
   heading,
@@ -41,21 +41,10 @@ const SnippetDashboard = ({
               </p>
             </div>
 
-            <div className="inline-flex w-fit items-center rounded-full border border-border/70 bg-background/70 p-1">
-              {tabs.map((tab, index) => (
-                <button
-                  key={tab}
-                  type="button"
-                  className={
-                    index === 0
-                      ? "rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-                      : "rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  }
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
+            <Button variant="default" size="default" aria-label="Sort">
+              <Plus className="size-4" />
+              New Snippet
+            </Button>
           </div>
 
           <div className="mt-5 flex flex-wrap gap-2">
