@@ -141,7 +141,8 @@ const Navbar = ({
     <section className={cn("py-2", className)}>
       <div className=" h-16 flex justify-center items-center">
         {/* Desktop Menu */}
-        <nav className="flex items-center justify-between w-3/4 px-4">
+
+        <nav className="flex items-center justify-between w-full px-4 lg:w-3/4 lg:px-0">
           <div className="flex items-center gap-6">
             {/* Logo */}
             <Link href={logo.url} className="flex items-center gap-2">

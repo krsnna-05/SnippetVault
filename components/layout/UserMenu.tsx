@@ -26,7 +26,11 @@ interface UserMenuProps {
   };
 }
 
-const getInitials = (email: string): string => email.slice(0, 2).toUpperCase();
+const getInitials = (displayName: string): string => {
+  const parts = displayName.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
 
 const UserMenu = ({ auth }: UserMenuProps) => {
   const { user, isLoading } = useAuthStore();
@@ -34,6 +38,7 @@ const UserMenu = ({ auth }: UserMenuProps) => {
 
   const handleLogout = async () => {
     try {
+      toast.loading("Logging out...");
       await logout();
       toast.success("Logged out successfully.");
       router.push("/");
@@ -43,7 +48,12 @@ const UserMenu = ({ auth }: UserMenuProps) => {
   };
 
   if (isLoading) {
-    return <div className="size-9 rounded-full bg-muted animate-pulse" />;
+    return (
+      <div className="flex items-center gap-2">
+        <div className="size-9 rounded-full bg-muted animate-pulse" />
+        <div className="h-4 w-20 rounded bg-muted animate-pulse" />
+      </div>
+    );
   }
 
   if (!user) {
@@ -62,17 +72,27 @@ const UserMenu = ({ auth }: UserMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative size-9 rounded-full p-0">
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 rounded-full px-2 h-9"
+        >
           <Avatar>
-            <AvatarFallback>{getInitials(user.email ?? "U")}</AvatarFallback>
+            <AvatarFallback>
+              {getInitials(
+                user.user_metadata?.display_name ?? user.email ?? "U",
+              )}
+            </AvatarFallback>
           </Avatar>
+          <span className="text-sm font-medium">
+            {user.user_metadata?.display_name ?? user.email}
+          </span>
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="min-w-44">
         <DropdownMenuLabel className="flex flex-col gap-0.5 pb-2">
           <span className="text-sm font-semibold text-foreground">
-            My Account
+            {user.user_metadata?.display_name ?? "My Account"}
           </span>
           <span className="truncate text-xs font-normal text-muted-foreground">
             {user.email}
