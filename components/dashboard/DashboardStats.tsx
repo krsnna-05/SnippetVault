@@ -2,18 +2,30 @@ import {
   DashboardCollection,
   DashboardStat,
 } from "@/components/dashboard/types";
+import {
+  BookMarked,
+  Clock3,
+  FolderKanban,
+  type LucideIcon,
+} from "lucide-react";
 
 interface DashboardStatsProps {
   stats: DashboardStat[];
   collections: DashboardCollection[];
 }
 
+const iconMap: Record<string, LucideIcon> = {
+  BookMarked,
+  Clock3,
+  FolderKanban,
+};
+
 const DashboardStats = ({ stats, collections }: DashboardStatsProps) => {
   return (
     <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => {
-          const Icon = stat.icon;
+          const Icon = iconMap[stat.iconName];
 
           return (
             <article

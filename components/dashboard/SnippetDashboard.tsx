@@ -3,10 +3,7 @@ import {
   DashboardSnippet,
   DashboardStat,
 } from "@/components/dashboard/types";
-import AddSnippetCard from "@/components/dashboard/AddSnippetCard";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import DashboardStats from "@/components/dashboard/DashboardStats";
-import SnippetCard from "@/components/dashboard/SnippetCard";
+import FilterSnippents from "@/components/dashboard/FilterSnippents";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 
@@ -18,18 +15,12 @@ interface SnippetDashboardProps {
   snippets: DashboardSnippet[];
 }
 
-const SnippetDashboard = ({
-  heading,
-  description,
-  stats,
-  collections,
-  snippets,
-}: SnippetDashboardProps) => {
+const SnippetDashboard = ({ snippets }: SnippetDashboardProps) => {
   return (
     <main className="relative flex-1 overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_35%),radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_25%)]" />
+      <div className="absolute inset-0 -z-10 bg-background" />
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <section className="rounded-[28px] border border-border/70 bg-card/60 p-5 shadow-xl shadow-black/5 backdrop-blur sm:p-6">
+        <section className="sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-foreground">
@@ -41,34 +32,13 @@ const SnippetDashboard = ({
               </p>
             </div>
 
-            <Button variant="default" size="default" aria-label="Sort">
+            <Button variant="default" size="default" aria-label="New Snippet">
               <Plus className="size-4" />
               New Snippet
             </Button>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            {["python", "react", "backend", "frontend", "api", "sql"].map(
-              (tag, index) => (
-                <span
-                  key={tag}
-                  className={
-                    index === 0
-                      ? "rounded-full border border-primary/30 bg-primary/12 px-3 py-1 text-xs font-semibold text-primary"
-                      : "rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground"
-                  }
-                >
-                  #{tag}
-                </span>
-              ),
-            )}
-          </div>
-
-          <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {snippets.map((snippet) => (
-              <SnippetCard key={snippet.id} snippet={snippet} />
-            ))}
-          </div>
+          <FilterSnippents snippets={snippets} />
         </section>
       </div>
     </main>

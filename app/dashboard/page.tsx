@@ -1,5 +1,3 @@
-import { BookMarked, Clock3, FolderKanban } from "lucide-react";
-
 import SnippetDashboard from "@/components/dashboard/SnippetDashboard";
 import {
   DashboardCollection,
@@ -12,19 +10,19 @@ const stats: DashboardStat[] = [
     label: "Saved snippets",
     value: "148",
     detail: "12 new entries added this week across backend and UI work.",
-    icon: BookMarked,
+    iconName: "BookMarked",
   },
   {
     label: "Recent updates",
     value: "23",
     detail: "Most edits happened in authentication and API helper templates.",
-    icon: Clock3,
+    iconName: "Clock3",
   },
   {
     label: "Active collections",
     value: "09",
     detail: "Reusable kits for React, SQL, automation, and deployment flows.",
-    icon: FolderKanban,
+    iconName: "FolderKanban",
   },
 ];
 

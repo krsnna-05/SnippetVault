@@ -1,10 +1,8 @@
-import { LucideIcon } from "lucide-react";
-
 export interface DashboardStat {
   label: string;
   value: string;
   detail: string;
-  icon: LucideIcon;
+  iconName: string;
 }
 
 export interface DashboardSnippet {

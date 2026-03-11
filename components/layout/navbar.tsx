@@ -55,6 +55,7 @@ interface NavbarProps {
 const Navbar = ({
   logo = {
     url: "https://www.shadcnblocks.com",
+
     src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
     alt: "logo",
     title: "Shadcnblocks.com",
@@ -63,6 +64,7 @@ const Navbar = ({
     { title: "Home", url: "#" },
     {
       title: "Products",
+
       url: "#",
       items: [
         {

@@ -1,0 +1,728 @@
+Jl
+
+Frontend Developer Assessment | SnippetVault
+
+JUNIOR – MID · FRONTEND DEVELOPER
+
+Technical Assessment
+SnippetVault — Public Code Snippet Manager
+
+1–2 Days
+
+Junior–Mid
+
+📐
+
+Auth + Public
+
+Estimated
+
+Level
+
+Features
+
+⏱
+
+🌐
+
+What this assessment is about
+
+We want to see how you think — how you structure components, handle auth flows, manage shared vs.
+private data, and deal with real UI edge cases. The project is scoped to be completable in 1 to 2 days.
+Quality and clarity matter more than completeness. Shipping something focused and clean beats a
+half-working feature dump.
+
+01
+
+Project Overview
+
+You will build SnippetVault — a public code snippet manager. It is a tool developers use to save, tag, search, and
+share reusable bits of code. Think of it as a lightweight, focused alternative to GitHub Gists, with a clean public
+profile and rich sharing features.
+The app has two distinct modes: an authenticated workspace where a user manages their own snippets, and a
+public-facing surface where anyone can browse, view, and copy shared snippets without logging in.
+
+What you are building
+•​ Email/password authentication with protected and public routes
+•​ A personal dashboard to create, edit, search, and filter your snippets
+•​ A public profile page showing all snippets a user has made public
+•​ Four sharing mechanisms: public URL, share with specific users, image export, and clipboard link
+•​ Syntax-highlighted code preview with copy-to-clipboard feedback
+Scope note
+
+Use Supabase Auth for authentication — do not build your own auth system. Row Level Security (RLS)
+policies on your tables are required to protect private snippets.
+
+Frontend Developer Assessment | SnippetVault
+
+02
+
+Jl
+
+Core Requirements
+
+2.1 Authentication
+•​
+•​
+•​
+•​
+
+Sign up page with email, password, and a display name field
+Log in page with email and password
+Form validation: all fields required, password minimum 8 characters, email format check
+On login success, redirect to /dashboard — on sign-up success, redirect to /dashboard with a welcome
+toast
+•​ A persistent nav bar shows the logged-in user's name and avatar (initials fallback) with a logout option
+•​ All /dashboard routes must redirect unauthenticated users to /login — use Next.js middleware for this
+•​ Public routes (/s/[id], /u/[username]) must be accessible without login
+
+2.2 Snippet Dashboard (authenticated)
+•​
+•​
+•​
+•​
+•​
+
+Display all of the current user's snippets as cards in a responsive grid
+Each card shows: title, language badge, first 3 lines of code, tags, and a visibility indicator (public / private)
+Clicking a card opens the detail side panel
+A '+ New Snippet' button in the header opens the create form
+Live search (debounced) and tag filter chips narrow the visible snippets client-side
+
+2.3 Snippet Detail Panel
+•​ Opens as a right-side Sheet panel without leaving the dashboard
+•​ Full syntax-highlighted code view with a Copy button — shows 'Copied!' for 2 seconds then reverts, per
+snippet
+•​ Displays title, language, description, tags, visibility status, and timestamps
+•​ Edit and Delete actions — delete requires an inline confirmation step, not a browser dialog
+•​ A Share button opens the share menu (see Section 2.5)
+
+2.4 Create & Edit Form
+•​ Fields: title (required), language (required, fixed select list), description (optional), code (required), tags
+(free-form chips), visibility toggle (Public / Private, default Private)
+•​ Inline validation on submit — required fields show error messages below the input
+•​ On success the list updates instantly without a full page reload
+•​ Editing pre-fills all fields including the current visibility state
+
+2.5 Sharing Features
+All four sharing options must be accessible from the Share button in the detail panel. The share menu (a Popover
+or Sheet) contains:
+
+a) Public URL
+•​ Each snippet has a permanent public URL: /s/[snippet-id]
+
+Jl
+
+Frontend Developer Assessment | SnippetVault
+
+•​ The public page renders the snippet with full syntax highlighting, the author's display name, and a Copy
+Code button
+•​ If the snippet is set to Private, the public URL must return a 404-style 'Snippet not found' page — never
+expose private code
+•​ The share menu shows the public URL only if the snippet is currently set to Public; otherwise it shows a
+prompt to make it public first
+
+b) Share with Specific Users
+•​ An input field in the share menu accepts an email address
+•​ Submitting adds that email to a snippet_shares table, granting read access
+•​ Shared users can view the snippet at /s/[id] even if it is set to Private
+•​ The share menu lists current shares with a Remove button next to each
+•​ If the email does not match any registered user, show a clear error: 'No account found with that email'
+c) Export as Image
+•​ A button in the share menu generates a styled PNG of the code snippet
+•​ Use html-to-image or dom-to-blob to capture a styled code block with the snippet title, language badge,
+and a SnippetVault watermark
+•​ The image downloads automatically with the filename [snippet-title].png
+•​ The export button must show a loading state while the image is being generated
+d) Copy Shareable Link
+•​ A single-click button copies the full public URL to clipboard
+•​ Button label changes to 'Link Copied!' for 2 seconds then reverts
+•​ If the snippet is Private and not shared, the copied link should still work for the owner — it must not work
+for anonymous visitors
+
+2.6 Public Profile Page
+•​
+•​
+•​
+•​
+•​
+
+03
+
+Route: /u/[username] — accessible without login
+Shows the user's display name, total public snippet count, and a grid of all their public snippets
+Each card links to the snippet's public page /s/[id]
+If the user has no public snippets, show an empty state: 'No public snippets yet'
+This page should be statically generated where possible (Next.js SSG or ISR)
+
+Technical Constraints
+
+All of the following are required. Do not substitute alternatives.
+▸ Next.js 16+ — App Router + Middleware for auth
+
+▸ TanStack Query v5 — Server state & mutations
+
+▸ TailwindCSS — All styling
+
+▸ TypeScript — Strict mode throughout
+
+Jl
+
+Frontend Developer Assessment | SnippetVault
+
+▸ shadcn/ui — Component library
+
+▸ html-to-image — Image export (or dom-to-blob)
+
+▸ Supabase — Auth + Postgres + RLS policies
+
+▸ Syntax Highlighter — Prism, Shiki, or
+react-syntax-highlighter
+
+▸ Zustand — UI & filter state
+
+3.1 Architecture Expectations
+•​ Next.js middleware must handle auth redirects — do not check auth inside every page component
+•​ Supabase RLS policies are required — a user must never be able to read another user's private snippets
+via a direct API call, even if they guess the ID
+•​ Custom hooks wrap all TanStack Query logic — no raw useQuery calls in JSX
+•​ API layer in /lib/api.ts — no Supabase client calls scattered across components
+•​ Types defined for all data shapes in /types/index.ts
+
+3.2 UI Generation Requirement (Google Stitch)
+To streamline the design process and evaluate how candidates work with modern AI-assisted design tools, the UI
+for this project must be generated using Google Stitch.
+
+Requirement
+Before starting development, candidates must generate the initial UI layouts using Google Stitch → Figma.
+The following screens must be generated:
+●​
+●​
+●​
+●​
+●​
+●​
+●​
+●​
+
+Login Page
+Sign Up Page
+Dashboard (Snippet Grid)
+Snippet Detail Panel (Side Sheet)
+Create / Edit Snippet Form
+Share Menu
+Public Snippet Page /s/[id]
+Public Profile Page /u/[username]
+
+The generated designs should include:
+●​
+●​
+●​
+●​
+●​
+
+Layout structure
+Component placement
+Responsive considerations (desktop / tablet / mobile)
+Code block area for syntax highlighting
+Snippet cards and metadata sections
+
+Implementation
+The generated UI should then be implemented in the project using:
+●​ shadcn/ui components
+●​ TailwindCSS
+
+Jl
+
+Frontend Developer Assessment | SnippetVault
+
+The implementation does not need to be pixel-perfect, but it should follow the general layout and structure of
+the generated design.
+
+Design Submission
+Candidates must share the generated Google Stitch / Figma design file with the following emails:
+●​ avinash.patel@weframetech.com
+●​ ayush.bathre@weframetech.com
+●​ harsh.raj@weframetech.com
+
+04
+
+Database Schema
+
+Create the following tables in Supabase. Enable Row Level Security on all tables.
+
+profiles (extends Supabase auth.users)
+Column
+
+Type
+
+Constraint
+
+Notes
+
+id
+
+uuid
+
+FK → auth.users
+
+Matches Supabase auth user ID
+
+username
+
+text
+
+UNIQUE NOT
+NULL
+
+URL-safe display name for /u/[username]
+
+display_name
+
+text
+
+NOT NULL
+
+Full name shown in the UI
+
+avatar_url
+
+text
+
+NULLABLE
+
+Optional profile image URL
+
+created_at
+
+timestamptz
+
+DEFAULT now()
+
+Account creation timestamp
+
+Column
+
+Type
+
+Constraint
+
+Notes
+
+id
+
+uuid
+
+PRIMARY KEY
+
+Auto-generated
+
+user_id
+
+uuid
+
+FK → profiles.id
+
+Owner of the snippet
+
+title
+
+text
+
+NOT NULL
+
+Short descriptive title
+
+language
+
+text
+
+NOT NULL
+
+e.g. typescript, python, bash
+
+description
+
+text
+
+NULLABLE
+
+Optional plain-text note
+
+code
+
+text
+
+NOT NULL
+
+Raw code content
+
+is_public
+
+boolean
+
+DEFAULT false
+
+Controls public visibility
+
+created_at
+
+timestamptz
+
+DEFAULT now()
+
+Creation timestamp
+
+updated_at
+
+timestamptz
+
+DEFAULT now()
+
+Updated on every edit
+
+snippets
+
+tags + snippet_tags
+
+Jl
+
+Frontend Developer Assessment | SnippetVault
+
+Column
+
+Type
+
+Constraint
+
+Notes
+
+id
+
+uuid
+
+PRIMARY KEY
+
+Auto-generated tag ID
+
+name
+
+text
+
+UNIQUE NOT
+NULL
+
+Lowercase tag label
+
+Column
+
+Type
+
+Constraint
+
+Notes
+
+snippet_id
+
+uuid
+
+FK → snippets.id
+
+References snippet
+
+tag_id
+
+uuid
+
+FK → tags.id
+
+References tag
+
+Column
+
+Type
+
+Constraint
+
+Notes
+
+id
+
+uuid
+
+PRIMARY KEY
+
+Auto-generated
+
+snippet_id
+
+uuid
+
+FK → snippets.id
+
+Shared snippet
+
+shared_with
+
+uuid
+
+FK → profiles.id
+
+Recipient user
+
+created_at
+
+timestamptz
+
+DEFAULT now()
+
+Share timestamp
+
+snippet_shares
+
+RLS Policy Requirements
+
+snippets: SELECT allowed if is_public = true OR user_id = auth.uid() OR id exists in snippet_shares for the
+requesting user. INSERT/UPDATE/DELETE allowed only if user_id = auth.uid(). snippet_shares:
+SELECT/INSERT/DELETE allowed only for the snippet owner (user_id = auth.uid()).
+
+Seed data
+
+Include at least 8 seed snippets across different languages. Mix public and private. At least 2 should have
+snippet_shares entries so reviewers can test the shared-access flow.
+
+05
+
+State Management
+
+Server state lives in TanStack Query. UI state lives in Zustand. These must not be mixed.
+
+TanStack Query — Server State
+•​
+•​
+•​
+•​
+•​
+•​
+
+useQuery(['snippets', userId]) — fetch the current user's snippets with tags. staleTime: 60s.
+useQuery(['snippet', id]) — single snippet for the detail panel
+useQuery(['shares', snippetId]) — list of users a snippet is shared with
+useMutation (create / update) — on success, invalidate ['snippets', userId]
+useMutation (delete) — optimistic removal from list cache; roll back on error with a toast
+useMutation (addShare / removeShare) — invalidate ['shares', snippetId] on settle
+
+Frontend Developer Assessment | SnippetVault
+
+Jl
+
+Zustand — UI State
+•​
+•​
+•​
+•​
+•​
+
+06
+
+activeSnippetId: string | null — drives which detail panel is open
+isShareMenuOpen: boolean — controls the share popover
+searchQuery: string — live search input value
+selectedTags: string[] — active tag filter chips
+Filtered list derived via useMemo from server data + store values — no re-fetch on filter change
+
+UI & shadcn Requirements
+
+Required shadcn Components
+•​
+•​
+•​
+•​
+•​
+•​
+•​
+•​
+•​
+
+Button, Input, Textarea, Select — all form controls
+Sheet — snippet detail side panel
+Dialog — delete confirmation
+Popover — share menu
+Badge — language label, tag chips, public/private indicator
+Skeleton — loading state for snippet grid
+Toaster / useToast — copy feedback, share success, and error messages
+Switch — the Public / Private visibility toggle in the create/edit form
+Separator — divides sections within the share menu
+
+Responsive Layout
+•​
+•​
+•​
+•​
+
+07
+
+Desktop (≥ 1024px): 3-column snippet grid, detail panel alongside
+Tablet (768–1023px): 2-column grid, detail panel overlays with backdrop
+Mobile (< 768px): single column, detail panel is full-screen
+Public profile and snippet pages must look good without login — treat them as marketing-facing
+
+Edge Cases to Handle
+
+Auth Edge Cases
+•​ Expired session: user should be silently redirected to /login, not shown a broken page
+•​ Signing up with an already-registered email: show 'An account with this email already exists'
+•​ Accessing /dashboard while logged out: redirect to /login with a ?redirect= param so they return after login
+Sharing Edge Cases
+•​ Sharing with your own email: show 'You cannot share a snippet with yourself'
+•​ Sharing with an email not in the system: show 'No account found with that email'
+
+Jl
+
+Frontend Developer Assessment | SnippetVault
+
+•​ Trying to export image on a very long snippet: cap the export at 50 lines and add a '...truncated' indicator
+•​ Making a snippet private after it has been shared via URL: the public URL must immediately return 404 —
+but shared-with users retain access
+
+General UI Edge Cases
+•​ Copy button: works on both http and https; has a textarea fallback for older browsers
+•​ Filter with no results: friendly empty state + 'Clear filters' button
+•​ Failed delete: optimistic rollback + toast with retry option
+•​ Failed image export: toast with the error message, button returns to default state
+
+08
+
+Evaluation Criteria
+
+Area
+
+What We Assess
+
+Weight
+
+Auth & Security
+
+Correct Supabase Auth flow, RLS enforced, middleware
+redirects, no private data leaks
+
+25%
+
+Functionality
+
+All core features work: CRUD, search/filter, all 4 share types,
+public pages
+
+25%
+
+State Handling
+
+TanStack Query + Zustand used correctly, optimistic delete
+with rollback
+
+20%
+
+UI Polish
+
+shadcn usage, responsive layout, all loading/empty/error
+states handled
+
+15%
+
+Code Quality
+
+TypeScript strictness, clean hooks, isolated API layer,
+feature-based structure
+
+15%
+
+Security is evaluated seriously
+
+We will test RLS directly by calling the Supabase API with a different user's auth token and attempting to
+read private snippets. If private data is accessible, this will be a significant mark-down regardless of how
+good the UI looks.
+
+09
+
+Bonus Challenges
+
+Only attempt these after all core requirements are solid.
+
+Bonus A — View Count
+Track how many times a public snippet page (/s/[id]) has been viewed. Show the count on the detail panel and the
+public page. Increment must happen server-side (a Server Action or API route) — not from the client directly to
+avoid RLS bypass.
+
+Frontend Developer Assessment | SnippetVault
+
+Jl
+
+Bonus B — Keyboard Navigation
+Arrow keys navigate between snippet cards. Enter opens the detail panel. Escape closes it. Tab moves focus into
+the panel. All interactions must work without a mouse.
+Bonus C — Language Stats Bar
+A small horizontal bar in the dashboard header shows snippet counts per language as proportional colored
+segments. Clicking a segment filters the list. Built entirely with Tailwind — no chart library.
+
+10
+
+Submission
+
+●​ Push your code to a private GitHub repository.
+●​ Grant repository and supabase access to the following emails:
+○​ avinash.patel@weframetech.com
+○​ ayush.bathre@weframetech.com
+○​ harsh.raj@weframetech.com
+●​ The README must include:
+○​ Setup steps
+○​ Required environment variables
+○​ Supabase project configuration notes
+○​ Any architectural decisions or known trade-offs
+●​ Deploy a live demo to Vercel — this is required, not optional.
+●​ Never commit Supabase credentials. Use .env.local for secrets and document the environment
+variable names in the README.
+
+Time limit
+
+Please submit by March 11th, 7:00 PM IST. Applications submitted after this time will be rejected. If
+you need more time for any reason, let us know before the deadline—it will not count against you.
+
+🌟 What to Expect When You Join Weframetech:
+
+🚀 Real-World Impact Build production-ready products that reach millions of users, from startups to
+billion-dollar companies.
+
+🌍 Global Exposure Work directly with international clients, giving you real-world experience with
+diverse teams, cultures, and markets.
+
+🛠 Work with Cutting-Edge Tech From Jamstack and serverless to AI and commerce ecosystems,
+you'll always be working with modern, high-demand tools.
+
+Frontend Developer Assessment | SnippetVault
+
+Jl
+
+💬 Open & Transparent Culture Weekly team calls, feedback loops, and async communication — we
+keep things clear and collaborative.
+
+🌱 Career Growth & Ownership You'll be given real responsibilities from Day 1, and a path to grow
+into leadership or specialization roles.
+
+🌴 100% Remote & Flexible Work from anywhere, on your schedule. We care about results, not time
+clocks.
+
+🤝 A Team That Actually Cares We're here to support each other, push boundaries, and have fun
+doing it.
+
+🎉 Young, Driven & Fun Culture No corporate BS. Just a passionate team building cool things and
+solving real problems.
+
+🧘 Mental Wellness & Balance We're serious about work-life balance and maintaining a healthy,
+respectful work environment.
+
+About The company: https://weframetech.com/ (Weframetech Solutions PVT Ltd) LinkedIn:
+https://www.linkedin.com/company/weframetechcom
+
+Good luck — keep it simple, keep it clean.
+
+
