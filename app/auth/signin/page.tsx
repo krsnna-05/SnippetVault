@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, AtSign, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, AtSign, Loader2, Mail } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import AuthFeaturePanel from "@/components/auth/AuthFeaturePanel";
 import FieldLabel from "@/components/auth/FieldLabel";
@@ -14,13 +16,9 @@ import { signUp } from "@/lib/api/auth";
 interface SigninProps {
   heading?: string;
   buttonText?: string;
+  loadingText?: string;
   className?: string;
 }
-
-type Status = {
-  type: "success" | "error" | "loading" | null;
-  message: string | null;
-};
 
 type AuthLikeError = {
   code?: string;
@@ -61,16 +59,14 @@ const mapSignupErrorMessage = (error: AuthLikeError): string => {
 const SigninPage = ({
   heading = "Create your account",
   buttonText = "Create account",
+  loadingText = "Creating your account...",
   className,
 }: SigninProps) => {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [status, setStatus] = useState<Status>({
-    type: null,
-    message: null,
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisplayName(e.target.value);
@@ -87,28 +83,25 @@ const SigninPage = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setStatus({ type: "loading", message: "Creating your account..." });
+    if (isSubmitting) return;
 
     if (!displayName.trim()) {
-      setStatus({ type: "error", message: "Display name is required." });
+      toast.error("Display name is required.");
       return;
     }
 
     if (!email.trim() || !email.includes("@")) {
-      setStatus({
-        type: "error",
-        message: "Please enter a valid email address.",
-      });
+      toast.error("Please enter a valid email address.");
       return;
     }
 
     if (password.length < 8) {
-      setStatus({
-        type: "error",
-        message: "Password must be at least 8 characters.",
-      });
+      toast.error("Password must be at least 8 characters.");
       return;
     }
+
+    setIsSubmitting(true);
+    const loadingToastId = toast.loading("Creating your account...");
 
     try {
       await signUp({
@@ -116,18 +109,17 @@ const SigninPage = ({
         email: email.trim(),
         password,
       });
-      setStatus({
-        type: "success",
-        message: "Signup successful. Check your email to confirm your account.",
+      toast.success("Signup successful. Redirecting you to the dashboard...", {
+        id: loadingToastId,
       });
+      router.push("/dashboard");
     } catch (error: unknown) {
       const authError = getAuthError(error);
-      setStatus({
-        type: "error",
-        message: mapSignupErrorMessage(authError),
-      });
+      toast.error(mapSignupErrorMessage(authError), { id: loadingToastId });
 
       console.error("Unexpected signup error", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,25 +168,22 @@ const SigninPage = ({
                 onChange={handlePasswordChange}
               />
 
-              <Button
-                type="submit"
-                className="h-11 w-full text-base font-semibold"
-              >
-                {buttonText}
-                <ArrowRight className="ml-2 size-4" />
-              </Button>
-
-              {status.type && status.message && (
-                <p
-                  className={cn(
-                    "text-sm",
-                    status.type === "error"
-                      ? "text-destructive"
-                      : "text-primary",
-                  )}
+              {isSubmitting ? (
+                <Button
+                  disabled
+                  className=" h-11 w-full text-base font-semibold"
                 >
-                  {status.message}
-                </p>
+                  {loadingText}
+                  <Loader2 className="ml-2 animate-spin size-4 " />
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="h-11 w-full text-base font-semibold"
+                >
+                  {buttonText}
+                  <ArrowRight className="ml-2 size-4" />
+                </Button>
               )}
             </form>
           </div>

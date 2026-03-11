@@ -1,18 +1,18 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { Book, Sunset, Trees, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import UserMenu from "@/components/layout/UserMenu";
 
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -21,13 +21,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 interface MenuItem {
   title: string;
@@ -148,7 +141,7 @@ const Navbar = ({
     <section className={cn("py-2", className)}>
       <div className=" h-16 flex justify-center items-center">
         {/* Desktop Menu */}
-        <nav className="flex items-center justify-between w-full px-4">
+        <nav className="flex items-center justify-between w-3/4 px-4">
           <div className="flex items-center gap-6">
             {/* Logo */}
             <Link href={logo.url} className="flex items-center gap-2">
@@ -171,14 +164,7 @@ const Navbar = ({
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
-          </div>
+          <UserMenu auth={auth} />
         </nav>
       </div>
     </section>

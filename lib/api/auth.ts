@@ -13,6 +13,11 @@ export async function signUp({
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      data: {
+        display_name: displayName,
+      },
+    },
   });
 
   if (error) throw error;

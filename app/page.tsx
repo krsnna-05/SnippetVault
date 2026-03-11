@@ -1,8 +1,10 @@
+import AuthRedirectToast from "@/components/auth/AuthRedirectToast";
 import { Hero } from "@/components/home/hero";
 
 export default function Home() {
   return (
     <main className="container mx-auto flex-1 flex flex-col items-center justify-center">
+      <AuthRedirectToast />
       <Hero
         heading="Modern Code Snippet Management"
         description="A modern code snippet manager built with Next.js, Supabase, and TanStack Query. Create, organize, and securely share snippets with public and private access controls."

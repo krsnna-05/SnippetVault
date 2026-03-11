@@ -3,14 +3,18 @@
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import AuthFeaturePanel from "@/components/auth/AuthFeaturePanel";
+import AuthRedirectToast from "@/components/auth/AuthRedirectToast";
 import FieldLabel from "@/components/auth/FieldLabel";
 import InputWithIcon from "@/components/auth/InputWithIcon";
 import PasswordInput from "@/components/auth/PasswordInput";
 
 import { Button } from "@/components/ui/button";
+import { login } from "@/lib/api/auth";
 
 interface LoginProps {
   heading?: string;
@@ -19,6 +23,34 @@ interface LoginProps {
   signupUrl?: string;
   className?: string;
 }
+
+type AuthLikeError = {
+  code?: string;
+  message?: string;
+};
+
+const getAuthError = (error: unknown): AuthLikeError => {
+  if (typeof error === "object" && error !== null) {
+    return error as AuthLikeError;
+  }
+
+  return {};
+};
+
+const mapLoginErrorMessage = (error: AuthLikeError): string => {
+  const code = error.code;
+  const message = (error.message ?? "").toLowerCase();
+
+  if (code === "invalid_credentials" || message.includes("invalid login")) {
+    return "Invalid Credentials";
+  }
+
+  if (code === "validation_failed" || message.includes("invalid email")) {
+    return "Please enter a valid email address.";
+  }
+
+  return error.message ?? "Unexpected login error. Please try again.";
+};
 
 const LoginPage = ({
   heading = "Welcome back",
@@ -29,6 +61,8 @@ const LoginPage = ({
 }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -38,8 +72,42 @@ const LoginPage = ({
     setPassword(e.target.value);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email.trim() || !email.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (!password) {
+      toast.error("Password is required.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const loadingToastId = toast.loading("Logging you in...");
+
+    try {
+      await login({
+        email: email.trim(),
+        password,
+      });
+
+      toast.success("Login successful.", { id: loadingToastId });
+      router.push("/dashboard");
+    } catch (error: unknown) {
+      const authError = getAuthError(error);
+      toast.error(mapLoginErrorMessage(authError), { id: loadingToastId });
+      console.error("Unexpected login error", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section className={cn("min-h-screen bg-background", className)}>
+      <AuthRedirectToast />
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:py-14">
         <AuthFeaturePanel />
 
@@ -54,7 +122,7 @@ const LoginPage = ({
               Continue managing your snippets and collections.
             </p>
 
-            <form className="mt-8 space-y-5">
+            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
               <FieldLabel htmlFor="email" label="Email Address" />
               <InputWithIcon
                 id="email"
@@ -76,6 +144,7 @@ const LoginPage = ({
               <Button
                 type="submit"
                 className="h-11 w-full text-base font-semibold"
+                disabled={isSubmitting}
               >
                 {buttonText}
                 <ArrowRight className="ml-2 size-4" />

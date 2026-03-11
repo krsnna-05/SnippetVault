@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Manrope, Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import AuthSessionCookieSync from "@/components/auth/AuthSessionCookieSync";
 import { Navbar } from "@/components/layout/navbar";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -43,8 +44,9 @@ export default function RootLayout({
             },
           }}
         />
+        <AuthSessionCookieSync />
+        <Toaster richColors={true} />
         {children}
-        <Toaster />
       </body>
     </html>
   );
