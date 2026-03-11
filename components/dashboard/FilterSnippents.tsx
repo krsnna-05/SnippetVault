@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { LockKeyhole, Search } from "lucide-react";
 
 import { DashboardSnippet } from "@/components/dashboard/types";
+import SnippetDetailSheet from "@/components/dashboard/SnippetDetailSheet";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface FilterSnippentsProps {
@@ -26,6 +28,7 @@ const FilterSnippents = ({ snippets }: FilterSnippentsProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [activeSnippetId, setActiveSnippetId] = useState<string | null>(null);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -77,6 +80,17 @@ const FilterSnippents = ({ snippets }: FilterSnippentsProps) => {
     );
   };
 
+  const activeSnippet = useMemo(
+    () => snippets.find((snippet) => snippet.id === activeSnippetId) ?? null,
+    [activeSnippetId, snippets],
+  );
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setDebouncedTerm("");
+    setSelectedTags([]);
+  };
+
   return (
     <div className="mt-5 space-y-5">
       <div className="relative max-w-xl">
@@ -120,8 +134,10 @@ const FilterSnippents = ({ snippets }: FilterSnippentsProps) => {
               .join("\n");
 
             return (
-              <article
+              <button
                 key={snippet.id}
+                type="button"
+                onClick={() => setActiveSnippetId(snippet.id)}
                 className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-border/70 bg-card/80 shadow-lg shadow-black/5 transition-transform duration-200 hover:-translate-y-1"
               >
                 <div className="flex items-start justify-between gap-3 border-b border-border/70 px-5 pb-4 pt-5">
@@ -174,15 +190,34 @@ const FilterSnippents = ({ snippets }: FilterSnippentsProps) => {
                     </p>
                   </div>
                 </div>
-              </article>
+              </button>
             );
           })}
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-border/80 bg-background/60 px-5 py-7 text-sm text-muted-foreground">
-          No snippets match your current search or tag filters.
+          <p>No snippets match your current search or tag filters.</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={clearFilters}
+          >
+            Clear filters
+          </Button>
         </div>
       )}
+
+      <SnippetDetailSheet
+        snippet={activeSnippet}
+        open={activeSnippet !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setActiveSnippetId(null);
+          }
+        }}
+      />
     </div>
   );
 };

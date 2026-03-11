@@ -1,8 +1,4 @@
-import {
-  DashboardCollection,
-  DashboardSnippet,
-  DashboardStat,
-} from "@/components/dashboard/types";
+import { DashboardSnippet } from "@/components/dashboard/types";
 import FilterSnippents from "@/components/dashboard/FilterSnippents";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
@@ -10,8 +6,6 @@ import { Plus } from "lucide-react";
 interface SnippetDashboardProps {
   heading: string;
   description: string;
-  stats: DashboardStat[];
-  collections: DashboardCollection[];
   snippets: DashboardSnippet[];
 }
 

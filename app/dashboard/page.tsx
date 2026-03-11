@@ -5,27 +5,6 @@ import {
   DashboardStat,
 } from "@/components/dashboard/types";
 
-const stats: DashboardStat[] = [
-  {
-    label: "Saved snippets",
-    value: "148",
-    detail: "12 new entries added this week across backend and UI work.",
-    iconName: "BookMarked",
-  },
-  {
-    label: "Recent updates",
-    value: "23",
-    detail: "Most edits happened in authentication and API helper templates.",
-    iconName: "Clock3",
-  },
-  {
-    label: "Active collections",
-    value: "09",
-    detail: "Reusable kits for React, SQL, automation, and deployment flows.",
-    iconName: "FolderKanban",
-  },
-];
-
 const collections: DashboardCollection[] = [
   { label: "Authentication", count: "18 snippets" },
   { label: "UI Patterns", count: "26 snippets" },
@@ -106,6 +85,7 @@ def read_root():
        COUNT(s.id) AS snippet_count
 FROM users u
 LEFT JOIN snippets s ON s.user_id = u.id
+
 GROUP BY u.id
 ORDER BY snippet_count DESC;`,
     tags: ["db", "metrics"],
@@ -118,8 +98,6 @@ const DashboardPage = () => {
     <SnippetDashboard
       heading="My Dashboard"
       description="A focused view of your most useful code blocks, recent changes, and reusable collections. Everything here uses static data for now so the UI can be shaped before the real backend is wired in."
-      stats={stats}
-      collections={collections}
       snippets={snippets}
     />
   );
